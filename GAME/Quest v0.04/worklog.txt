@@ -1,0 +1,131 @@
+6/23/2016
+
+Started creation for the game
+
+Basic structures created for:
+	Player stats & name
+	Enemy stats & names and some generic enemies created
+	Gear stat modifiers and some gear names
+	Armor is verifiably equippable, *BUT STATS STILL DO NOTHING*
+	Inventory function to print out stats of equipped gear created and working, optimized pretty well. print gear function is in gear.c at the bottom.
+	
+	
+**********************************************************************
+
+6/24/16
+	Modified character structures, damage stat working properly based on equipped weapon.
+	Defense stats working properly based on equipped gear
+	HP stats working properly based on equipped gear *NEED A HP COUNTER FOR BATTLE THOUGH*
+	
+
+6/26/16
+	Began work on giving user ability to change gear.
+	Basic inventory is set up, it will hold a max of 200 items. 
+	
+6/28/16
+	Modified user inventory, potions (consumables) can now be consumed and removed from inventory. It will also report how many hp have been healed. WILL NOT OVERHEAL THE USER.
+	Armor items in user inventory can be equipped, stats are successfully modified when doing so.
+	All items can now be equipped and stats are successfully modified
+	Item ID table fixed for legendary items
+	MOVED ALL INVENTORY ITEMS OUT OF hero.c to new file inventory.c
+	light potions are now stacked, make all consumable potions 10-90 work this way. *** SEE NOTES THIS IS INCOMPLETE ***
+	Equipment gold values added
+	Parameter to reduce incoming damage with equation established (void playerBattleParams (void))	UNTESTED IN BATTLE
+	Parameter to reduce incoming damage with equation established (void enemyBattleParams (void)) UNTESTED IN BATTLE
+	Enemies now carry gold and items (but they don't drop or have any chance to drop yet)
+	
+	
+	
+	
+	
+	
+	
+The to do list is getting long, so I want to try to organize this more and break it apart into phases:
+PHASE I: 
+		Getting all base character functions working (stats, consumables, equipment, exp, etc)
+		Getting all base enemy functions working (level scaling, damage, exp, item and gold drops, multiple enemies at once, etc)
+		Debugging and actually playing the game by just doing repeated battles and making sure that
+			1. EXP is gained, levels are gained, stats are modified
+			2. Gold and Items are dropped and added to the users inventory, printable, and modifiable
+			3. A kill history list would be AWESOME! DQ! A monster library where they can review what they've killed before! PWN!
+			
+PHASE II:
+		Upgrade to NCurses or if more ambitious SDL. SDL would likely require a massive rewrite, but that's ok! 
+		
+**************************************************************************************************************		
+PHASE 1: NEXT THINGS TO DO AS OF 6.28
+	//1. Allow all item types to be changed, not just chest armor
+	//1. When Items are equipped, they need to be removed from inventory, likewise, the item that is currently equipped
+	//	should be exchanged in THAT EXACT SLOT of the inventory, also, if the currently equipped item is null, nothing should
+	//	be placed in the inventory.
+		
+	2. Add some more gear (just do this little by little until there is a diverse enough amount of gear)
+	//3. Fix item ID table, you can't have all legendary types in the 1xxxx range, how am i supposed to equip them in the right
+	//	position?
+	//4. Stack consumables into single item locations. Do this whenever though, it seems tricky.
+	//5. Give all of the gear you've created (including consumables) a gold value that they will get from merchants.
+		KEEP VALUES LOW, POTENTIALLY EVEN bronze, silver, gold, plat like WoW. Make gold actually WORTH something.
+	6. Still have to have inventory printout as a variable so it only shows the number of items the person has but changes (instead of the fixed 10 we have)
+	7. Fix the null item actually showing as null, just have it say "EMPTY" instead.
+	8. Fix the item swaps showing null as an item, if the item is null, just do the equip with no prompt. Simple if statement in your gearswap functions will do.
+	9. Shields have damage, if you're going to have smite damage you'll need a smite damage stat for player.
+	//10. MOVE THE INVENTORY FUNCTIONS TO THEIR OWN SEPARATE FILES, hero.c is too big.
+	11. when a null item is to be displayed in currently equipped, have it display a string like "Nothing"
+		also, when you have a null spot in the middle of your inventory, the inventory just skips the space. We need a way to merge the items when one is removed (move everything back 1 unit).
+	12. Add a town merchant or something who carries all of the current game items. 
+	13. Add a hint of RNG to the amount of damage done / chance to hit/ critical strike so its not utterly bland and predictable. Have a separate source file and RNG function for this stuff.
+	14. Make it so when an enemy dies, it always drops its gold and RNG is run to see if it can drop items that may potentially exist in its inventory! 
+	
+	
+	
+TODO: 
+	
+	//Make it so when gear is changed, the changeGear function examines what is currently being worn and prompts the user if they want to change or not.
+	Fix all of the user input shit, the whole buffer ordeal is driving me bat shit insane
+	Figure out how to stack potions into a single inventory slot so say item 0 is just light potion(20)
+	//"enter 9 to quit" freezes program when browsing equipped gear.
+	Make inventory limit character stat actually halt the total number of items he can carry.
+	//Need to add an inventory before I can give user ability to change gear.
+	//Make is so player can CHANGE equipment, and all stats change immediately.
+	//Make the stats of equipped gear actually DO SOMETHING. They are currently not modifying the players stats. 
+	Make the PLAYERS STATS actually do something, they only exist in the code but do nothing in the game yet.
+	Make ENEMY stats actually do something
+	//add gold
+	add merchants
+	add random item drops
+	add randomness to damage and chance to miss based on attack rating
+	add chance of critical hit (player and enemy)
+	add unidentified items that can roll random (but predicable range) of stats.
+	Implement the game in ncurses, even if it is just in plain old text mode. Try to work it up to some kind of rogue like status
+	Add more gear
+	Make the game have some sort of story.. lol
+	
+WILL NEED A CURRENT HP VARIABLE TOO, CAN'T JUST CHANGE MAX.
+SET UP VITALITY THE SAME WAY YOU HAVE ATK WORKING WITH DAMAGE (to modify HP)
+
+*** I learned through trial and error that I can't reference a char * with a string literal.. i.e.
+char * example = "Bacon"
+if (example == "Bacon")
+	do stuff.
+	
+	The if statement won't carry out, but you can do 
+if (example[0] == 'B')
+	WHICH DID WORK for me. 
+	
+	See the file in misc test files called pointerfun.c, I haven't solved it in a simple manner. May need to go ask on stack exchange, but I'm going
+	 to leave it as is since this program reflects our current ability. I will get through the next text book or two and work on CS50 a bit more then 
+	 come back and modify the project instead of dwelling.
+
+
+CRITICAL BUG NOTES;
+
+1. POTIONS - When a potion stack hits 0, they are removed. But when a new one is found,
+	a) we'll do potion_stack += 1 and have potion_stack > 0 add the potion back to a slot in the inventory
+	b) the potion will have to go into an UNOCCUPIED SLOT WHICH TELLS US
+		b1) we need to be able to identify the last item in the inventory
+			b1a) we will do this by moving back every item when one vanishes so there are no null slots between 1 and the last item, this way we can just search for the first null and add the potion.
+
+Note: I can't really experiment with this until I start working on item drops, but I would like to have this solved while the potions are still fresh in my head. Just be aware
+potion_stack is an integer in the gear structure
+in gear.c light_potions potion.stack is set to += 1;
+in the character init potion.stack is set to += 2 and a light potion added to slot 1 in inventory (so the player starts with 3 pots).
